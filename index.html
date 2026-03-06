@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Watch Together</title>
+
+<style>
+
+body{
+background:black;
+color:white;
+font-family:sans-serif;
+text-align:center;
+}
+
+input{
+padding:10px;
+width:60%;
+}
+
+button{
+padding:10px;
+}
+
+video, iframe{
+width:90%;
+height:60vh;
+margin-top:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Watch Together</h2>
+
+<input id="room" placeholder="Enter room name">
+<button onclick="joinRoom()">Join</button>
+
+<br><br>
+
+<input id="link" placeholder="Paste video link">
+<button onclick="play()">Play</button>
+
+<div id="player"></div>
+
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+<script>
+
+let socket = io("https://socket-server-demo.vercel.app")
+
+let room=""
+
+function joinRoom(){
+
+room=document.getElementById("room").value
+
+socket.emit("join",room)
+
+alert("Joined room: "+room)
+
+}
+
+function play(){
+
+let link=document.getElementById("link").value
+
+document.getElementById("player").innerHTML=
+`<iframe src="${link}" allowfullscreen></iframe>`
+
+socket.emit("play",{room:room,link:link})
+
+}
+
+socket.on("play",(data)=>{
+
+if(data.room===room){
+
+document.getElementById("player").innerHTML=
+`<iframe src="${data.link}" allowfullscreen></iframe>`
+
+}
+
+})
+
+</script>
+
+</body>
+</html>
